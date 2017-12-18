@@ -14,6 +14,12 @@
     <url>https://github.com/bizrateinsights</url>
   </organization>
 
+  <scm>
+    <connection>scm:git:git://github.com/bizrateinsights/metrics-cloudwatch.git</connection>
+    <developerConnection>scm:git:git@github.com:bizrateinsights/metrics-cloudwatch.git</developerConnection>
+    <url>http://github.com/bizrateinsights/metrics-cloudwatch</url>
+  </scm>
+
   <properties>
     <default.jdk>1.6</default.jdk>
     <default.encoding>UTF-8</default.encoding>
