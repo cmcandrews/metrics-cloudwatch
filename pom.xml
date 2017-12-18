@@ -38,6 +38,7 @@
     <pmd.plugin.version>3.7</pmd.plugin.version>
     <surefire.plugin.version>2.19.1</surefire.plugin.version>
     <checkstyle.plugin.version>2.17</checkstyle.plugin.version>
+    <maven-gpg-plugin.version>1.5</maven-gpg-plugin.version>
     <pit.version>1.1.11</pit.version>
     <jacoco.version>0.7.8</jacoco.version>
     <coverage.exclude>**/wiring/**</coverage.exclude>
@@ -382,6 +383,20 @@
                 <requireUpperBoundDeps />
               </rules>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>${maven-gpg-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
