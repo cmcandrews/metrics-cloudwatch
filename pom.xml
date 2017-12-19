@@ -49,6 +49,7 @@
     <coverage.target>0.88</coverage.target>
 
     <enforcer-plugin.version>1.4.1</enforcer-plugin.version>
+    <javadoc.plugin.version>2.10.4</javadoc.plugin.version>
     <build-helper-plugin.version>1.12</build-helper-plugin.version>
     <compiler.plugin.version>3.6.1</compiler.plugin.version>
     <release.plugin.version>2.5.3</release.plugin.version>
@@ -219,6 +220,14 @@
             <!-- JDK8 does not have the UseSplitVerifier flag -->
             <!-- -XX:-UseSplitVerifier -->
             <argLine>-noverify ${argLine}</argLine>
+          </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>${javadoc.plugin.version}</version>
+          <configuration>
+            <encoding>${default.encoding}</encoding>
+            <failOnError>false</failOnError>
           </configuration>
         </plugin>
       </plugins>
@@ -401,6 +410,18 @@
                 <requireUpperBoundDeps />
               </rules>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <!-- Ensure that a javadoc jar is being generated and deployed -->
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
