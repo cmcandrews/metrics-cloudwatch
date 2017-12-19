@@ -2,3 +2,11 @@ language: java
 jdk: 
   - oraclejdk8
 
+addons:
+  sonarcloud:
+    organization: "bizrateinsights"
+    token:
+      secure: "By2bS6vHl1CAwU2V1FMaTVYj1MrJ1EjgZoZX7YFXakaI9uzhI86IZoRu+cRy5vZ/lkoZqEzGlIPPJvie81XbTV9Oohk7YKRV4J8bWxM/d0+ioQ4UxZEbHqi22TbOdaLfc0BqXwDwzQ4VGknACbM3D+0semwfIxmBNHE2/KnNdmVOjMOgS2Ks3yJU9QkHyOmhkkaSQyvo6jBnogBccN+1pHDcoIz4naBEV9hEYfWnpNvkKnBRoANec1Y1VSTW8YUb9jYHjsPJoL9aFY8xPJaxGioIWdEjb3aqVGnZwtV1ZVJitu2VnUvNoO8EsrTrcnPYWsShUfgfWCr41cISsIMYARBZeKFAzYJ51snubSPDkS7gbQZuxAgzPIR837ZYP0u+xWW0qUNXMeDupIxU6PYw/WxUI1F1LZDYyAeSIzqBO0SqgS8ua+xbZLAjkuyVZKLB2RbwxfYogDS8MzqkxiMomjpmKKK9nbBvFQUPkkUvcA2/+3uZOrrn9uwAeqIozmIPovOwChDxpyGjgsAxnltZ/+RhkzTsXrcUcD/G/pCyRuq4qy0C4whxYnLvp9/8sIALy1D1YB3gJrYnZFzjxoXHn87xFbd+u9xMqQuy8RR3HVw+JswnLeyy5lG5Jw5X18a2t7W9Lz8Or1txh2miX0daRCUho+mIOELLizBl1ewlYEo="
+    script:
+      - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
+
