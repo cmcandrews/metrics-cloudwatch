@@ -6,13 +6,30 @@
   <artifactId>metrics-cloudwatch</artifactId>
   <version>1.2-SNAPSHOT</version>
 
-  <name>CloudWatch Metrics Reporter</name>
+  <name>metrics-cloudwatch</name>
   <description>A Dropwizard Metrics reporter that posts to AWS CloudWatch</description>
+  <url>http://github.com/bizrateinsights/metrics-cloudwatch</url>
+
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
 
   <organization>
     <name>Bizrate Insights</name>
     <url>https://github.com/bizrateinsights</url>
   </organization>
+
+  <developers>
+    <developer>
+      <name>Chris McAndrews</name>
+      <email>cmcandrews@bizrate.com</email>
+      <organization>Bizrate Insights</organization>
+      <organizationUrl>http://www.bizrateinsights.com</organizationUrl>
+    </developer>
+  </developers>
 
   <scm>
     <connection>scm:git:git://github.com/bizrateinsights/metrics-cloudwatch.git</connection>
