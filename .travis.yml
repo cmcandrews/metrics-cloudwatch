@@ -11,5 +11,5 @@ addons:
 script:
   - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
 after_success:
-  - mvn coveralls:report
+  - mvn org.eluder.coveralls:coveralls-maven-plugin:report
 
