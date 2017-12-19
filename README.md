@@ -1,4 +1,4 @@
-Metrics CloudWatch [![Build Status](https://travis-ci.org/bizrateinsights/metrics-cloudwatch.png?branch=master)](https://travis-ci.org/bizrateinsights/metrics-cloudwatch)
+Metrics CloudWatch [![Build Status](https://travis-ci.org/bizrateinsights/metrics-cloudwatch.png?branch=master)](https://travis-ci.org/bizrateinsights/metrics-cloudwatch) [![Coverage Status](https://coveralls.io/repos/github/bizrateinsights/metrics-cloudwatch/badge.svg?branch=master)](https://coveralls.io/github/bizrateinsights/metrics-cloudwatch?branch=master)
 ==================
 A DropWizard [Metrics](http://metrics.dropwizard.io/) Reporter.
 
