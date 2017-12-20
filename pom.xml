@@ -195,7 +195,7 @@
             <autoVersionSubmodules>true</autoVersionSubmodules>
             <tagNameFormat>@{project.version}</tagNameFormat>
             <useReleaseProfile>false</useReleaseProfile>
-            <releaseProfiles>sign-artifacts</releaseProfiles>
+            <releaseProfiles>sign-artifact</releaseProfiles>
             <goals>deploy</goals>
           </configuration>
         </plugin>
