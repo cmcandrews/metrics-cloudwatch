@@ -49,6 +49,7 @@
 
     <coverage.target>0.88</coverage.target>
 
+    <source.plugin.version>3.0.1</source.plugin.version>
     <nexus-staging-maven-plugin.version>1.6.7</nexus-staging-maven-plugin.version>
     <enforcer-plugin.version>1.4.1</enforcer-plugin.version>
     <javadoc.plugin.version>2.10.4</javadoc.plugin.version>
@@ -355,6 +356,7 @@
       <plugin>
         <!-- Ensure that source code is packaged and deployed for inclusion into IDEs -->
         <artifactId>maven-source-plugin</artifactId>
+        <version>${source.plugin.version}</version>
         <executions>
           <execution>
             <phase>package</phase>
