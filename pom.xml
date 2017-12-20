@@ -4,7 +4,7 @@
 
   <groupId>com.bizrateinsights</groupId>
   <artifactId>metrics-cloudwatch</artifactId>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.2</version>
 
   <name>metrics-cloudwatch</name>
   <description>A Dropwizard Metrics reporter that posts to AWS CloudWatch</description>
@@ -35,6 +35,7 @@
     <connection>scm:git:git://github.com/bizrateinsights/metrics-cloudwatch.git</connection>
     <developerConnection>scm:git:git@github.com:bizrateinsights/metrics-cloudwatch.git</developerConnection>
     <url>http://github.com/bizrateinsights/metrics-cloudwatch</url>
+    <tag>1.2</tag>
   </scm>
 
   <properties>
