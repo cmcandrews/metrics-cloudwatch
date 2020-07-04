@@ -39,7 +39,7 @@
   </scm>
 
   <properties>
-    <default.jdk>1.7</default.jdk>
+    <default.jdk>1.8</default.jdk>
     <default.encoding>UTF-8</default.encoding>
     <!--
     duplicating the configuration above, since this is the variable automatically picked up by a lot of plugins,
