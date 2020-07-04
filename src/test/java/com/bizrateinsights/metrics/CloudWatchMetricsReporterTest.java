@@ -115,9 +115,6 @@ public class CloudWatchMetricsReporterTest {
         final long timestamp = System.currentTimeMillis();
         given(clock.getTime()).willReturn(timestamp);
 
-        given(cloudWatch.putMetricDataAsync(any(PutMetricDataRequest.class)))
-                .willReturn(Futures.immediateFuture(new PutMetricDataResult()));
-
         // When
         reporter.report(gauges, counters, histograms, meters, timers);
 
