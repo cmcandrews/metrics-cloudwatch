@@ -72,10 +72,10 @@
     <sonar.exclusions>**/wiring/**</sonar.exclusions>
 
     <cloudwatch-sdk.version>1.11.816</cloudwatch-sdk.version>
-    <guava.version>19.0</guava.version>
-    <guava-testlib.version>19.0</guava-testlib.version>
+    <guava.version>29.0-jre</guava.version>
+    <guava-testlib.version>29.0-jre</guava-testlib.version>
     <hamcrest.version>1.3</hamcrest.version>
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13</junit.version>
     <metrics.version>3.1.2</metrics.version>
     <mockito.version>1.10.19</mockito.version>
     <powermock.version>1.6.4</powermock.version>
