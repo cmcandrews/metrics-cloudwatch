@@ -71,7 +71,7 @@
     <integration.coverage.exclude>**/model/**</integration.coverage.exclude>
     <sonar.exclusions>**/wiring/**</sonar.exclusions>
 
-    <cloudwatch-sdk.version>1.11.77</cloudwatch-sdk.version>
+    <cloudwatch-sdk.version>1.11.816</cloudwatch-sdk.version>
     <guava.version>19.0</guava.version>
     <guava-testlib.version>19.0</guava-testlib.version>
     <hamcrest.version>1.3</hamcrest.version>
