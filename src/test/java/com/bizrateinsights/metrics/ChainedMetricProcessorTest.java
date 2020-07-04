@@ -17,12 +17,13 @@
 package com.bizrateinsights.metrics;
 
 import com.amazonaws.services.cloudwatch.model.MetricDatum;
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.function.Function;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -61,7 +62,7 @@ public class ChainedMetricProcessorTest {
     @Test
     public void shouldReturnOriginalForEmptyDelegateList() {
         // Given
-        processor = ChainedMetricProcessor.using(ImmutableList.<Function<MetricDatum, MetricDatum>>of());
+        processor = ChainedMetricProcessor.using(ImmutableList.of());
         final MetricDatum original = new MetricDatum().withMetricName("original");
 
         // When

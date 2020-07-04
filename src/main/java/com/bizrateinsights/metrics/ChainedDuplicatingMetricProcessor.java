@@ -17,14 +17,15 @@
 package com.bizrateinsights.metrics;
 
 import com.amazonaws.services.cloudwatch.model.MetricDatum;
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * Applies a chain of duplicating CloudWatch metric processors, including the original metric datum in the resulting
@@ -32,7 +33,7 @@ import java.util.Set;
  *
  * @author Chris McAndrews
  */
-public class ChainedDuplicatingMetricProcessor implements Function<MetricDatum, Set<MetricDatum>> {
+public class ChainedDuplicatingMetricProcessor implements Function<MetricDatum, Stream<MetricDatum>> {
 
     private final List<Function<MetricDatum, Set<MetricDatum>>> delegateProcessors;
 
@@ -45,14 +46,14 @@ public class ChainedDuplicatingMetricProcessor implements Function<MetricDatum, 
     }
 
     @Override
-    public Set<MetricDatum> apply(MetricDatum metricDatum) {
+    public Stream<MetricDatum> apply(MetricDatum metricDatum) {
 
         final Set<MetricDatum> result = Sets.newHashSet(metricDatum);
 
         for (Function<MetricDatum, Set<MetricDatum>> delegate : delegateProcessors) {
-            result.addAll(Optional.fromNullable(delegate.apply(metricDatum)).or(ImmutableSet.<MetricDatum>of()));
+            result.addAll(Optional.ofNullable(delegate.apply(metricDatum)).orElse(ImmutableSet.of()));
         }
 
-        return ImmutableSet.copyOf(result);
+        return result.stream();
     }
 }

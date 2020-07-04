@@ -17,9 +17,9 @@
 package com.bizrateinsights.metrics;
 
 import com.amazonaws.services.cloudwatch.model.Dimension;
-import com.google.common.base.Function;
 
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Converts a key/value tag to a CloudWatch dimension.

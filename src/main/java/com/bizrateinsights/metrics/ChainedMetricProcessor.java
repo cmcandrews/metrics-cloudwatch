@@ -17,10 +17,10 @@
 package com.bizrateinsights.metrics;
 
 import com.amazonaws.services.cloudwatch.model.MetricDatum;
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Applies a chain of CloudWatch metric processors.

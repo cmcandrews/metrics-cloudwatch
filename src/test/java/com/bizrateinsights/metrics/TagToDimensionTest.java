@@ -17,7 +17,6 @@
 package com.bizrateinsights.metrics;
 
 import com.amazonaws.services.cloudwatch.model.Dimension;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 
@@ -38,7 +37,7 @@ public class TagToDimensionTest {
         final Map<String, String> tags = ImmutableMap.of("key", "value");
 
         // When
-        final Dimension result = TagToDimension.INSTANCE.apply(FluentIterable.from(tags.entrySet()).first().get());
+        final Dimension result = TagToDimension.INSTANCE.apply(tags.entrySet().stream().findFirst().get());
 
         // Then
         final Dimension expected = new Dimension().withName("key").withValue("value");

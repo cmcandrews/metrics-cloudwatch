@@ -30,8 +30,6 @@ import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Snapshot;
 import com.codahale.metrics.Timer;
-import com.google.common.base.Function;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedMap;
@@ -49,6 +47,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -512,8 +512,9 @@ public class CloudWatchMetricsReporterTest {
                 new MetricDatum().withMetricName("timer.p999").withValue(0.006).withTimestamp(new Date(timestamp)).withUnit(StandardUnit.Microseconds)
         );
 
-        final List<MetricDatum> fixedPrecisionMetricData = FluentIterable.from(request.getMetricData())
-                .transform(FixPrecision.INSTANCE).toList();
+        final List<MetricDatum> fixedPrecisionMetricData = request.getMetricData().stream()
+                .map(FixPrecision.INSTANCE)
+                .collect(Collectors.toList());
 
         assertThat(fixedPrecisionMetricData, containsInAnyOrder(expectedMetrics.toArray()));
     }
@@ -585,8 +586,9 @@ public class CloudWatchMetricsReporterTest {
                 new MetricDatum().withMetricName("timer.p999").withValue(0.006).withTimestamp(new Date(timestamp)).withUnit(StandardUnit.Microseconds)
         );
 
-        final List<MetricDatum> fixedPrecisionMetricData1 = FluentIterable.from(requests.get(0).getMetricData())
-                .transform(FixPrecision.INSTANCE).toList();
+        final List<MetricDatum> fixedPrecisionMetricData1 = requests.get(0).getMetricData().stream()
+                .map(FixPrecision.INSTANCE)
+                .collect(Collectors.toList());
 
         assertThat(fixedPrecisionMetricData1, containsInAnyOrder(expectedMetrics1.toArray()));
 
@@ -610,8 +612,9 @@ public class CloudWatchMetricsReporterTest {
                 new MetricDatum().withMetricName("timer.p999").withValue(0.006).withTimestamp(new Date(timestamp)).withUnit(StandardUnit.Microseconds)
         );
 
-        final List<MetricDatum> fixedPrecisionMetricData2 = FluentIterable.from(requests.get(1).getMetricData())
-                .transform(FixPrecision.INSTANCE).toList();
+        final List<MetricDatum> fixedPrecisionMetricData2 = requests.get(1).getMetricData().stream()
+                .map(FixPrecision.INSTANCE)
+                .collect(Collectors.toList());
 
         assertThat(fixedPrecisionMetricData2, containsInAnyOrder(expectedMetrics2.toArray()));
     }

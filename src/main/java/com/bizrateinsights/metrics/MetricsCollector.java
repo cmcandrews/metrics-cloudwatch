@@ -19,13 +19,13 @@ package com.bizrateinsights.metrics;
 import com.amazonaws.services.cloudwatch.model.MetricDatum;
 import com.amazonaws.services.cloudwatch.model.StandardUnit;
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.base.Optional;
-import com.google.common.collect.FluentIterable;
 
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Chris McAndrews
@@ -34,7 +34,7 @@ public final class MetricsCollector {
     private final String prefix;
     private final Map<String, String> tags;
     private final long timestamp;
-    private final Set<MetricDatum> metrics = new HashSet<MetricDatum>();
+    private final Set<MetricDatum> metrics = new HashSet<>();
 
     private MetricsCollector(String prefix, Map<String, String> tags, long timestamp) {
         this.prefix = prefix;
@@ -51,8 +51,8 @@ public final class MetricsCollector {
                 .withMetricName(MetricRegistry.name(prefix, metricName))
                 .withTimestamp(new Date(timestamp))
                 .withValue(Double.valueOf(value.toString()))
-                .withUnit(cloudWatchUnit(unit).or(StandardUnit.None))
-                .withDimensions(FluentIterable.from(tags.entrySet()).transform(TagToDimension.INSTANCE).toSet());
+                .withUnit(cloudWatchUnit(unit).orElse(StandardUnit.None))
+                .withDimensions(tags.entrySet().stream().map(TagToDimension.INSTANCE).collect(Collectors.toSet()));
 
         this.metrics.add(metricDatum);
         return this;
@@ -63,7 +63,7 @@ public final class MetricsCollector {
                 .withMetricName(MetricRegistry.name(prefix, metricName))
                 .withTimestamp(new Date(timestamp))
                 .withValue(Double.valueOf(value.toString()))
-                .withDimensions(FluentIterable.from(tags.entrySet()).transform(TagToDimension.INSTANCE).toSet());
+                .withDimensions(tags.entrySet().stream().map(TagToDimension.INSTANCE).collect(Collectors.toSet()));
 
         this.metrics.add(metricDatum);
         return this;
@@ -87,6 +87,6 @@ public final class MetricsCollector {
             }
         }
 
-        return Optional.absent();
+        return Optional.empty();
     }
 }

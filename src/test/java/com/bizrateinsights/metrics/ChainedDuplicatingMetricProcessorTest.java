@@ -17,7 +17,6 @@
 package com.bizrateinsights.metrics;
 
 import com.amazonaws.services.cloudwatch.model.MetricDatum;
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.junit.Test;
@@ -26,6 +25,9 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
@@ -53,10 +55,10 @@ public class ChainedDuplicatingMetricProcessorTest {
         given(delegate.apply(any(MetricDatum.class))).willReturn(ImmutableSet.of(mutated));
 
         // When
-        final Set<MetricDatum> result = processor.apply(original);
+        final Stream<MetricDatum> result = processor.apply(original);
 
         // Then
-        assertThat(result, containsInAnyOrder(original, mutated));
+        assertThat(result.collect(Collectors.toSet()), containsInAnyOrder(original, mutated));
         then(delegate).should().apply(original);
     }
 
@@ -64,14 +66,14 @@ public class ChainedDuplicatingMetricProcessorTest {
     public void shouldReturnOriginalForEmptyDelegateList() {
         // Given
         processor =
-                ChainedDuplicatingMetricProcessor.using(ImmutableList.<Function<MetricDatum, Set<MetricDatum>>>of());
+                ChainedDuplicatingMetricProcessor.using(ImmutableList.of());
 
         final MetricDatum original = new MetricDatum().withMetricName("metric");
 
         // When
-        final Set<MetricDatum> result = processor.apply(original);
+        final Stream<MetricDatum> result = processor.apply(original);
 
         // Then
-        assertThat(result, containsInAnyOrder(original));
+        assertThat(result.collect(Collectors.toSet()), containsInAnyOrder(original));
     }
 }

@@ -30,11 +30,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.ScheduledReporter;
 import com.codahale.metrics.Snapshot;
 import com.codahale.metrics.Timer;
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -43,16 +39,19 @@ import com.google.common.primitives.Doubles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * @author Chris McAndrews
@@ -71,7 +70,7 @@ public class CloudWatchMetricsReporter extends ScheduledReporter {
      * We only submit the difference in counters since the last submission. This way we don't have to reset the counters
      * within this application.
      */
-    private final Map<Counting, Long> lastPolledCounts = new HashMap<Counting, Long>();
+    private final Map<Counting, Long> lastPolledCounts = new HashMap<>();
 
     private final boolean enabled;
 
@@ -315,7 +314,7 @@ public class CloudWatchMetricsReporter extends ScheduledReporter {
         try {
             final long timestamp = clock.getTime();
 
-            final Set<MetricDatum> metrics = new HashSet<MetricDatum>();
+            final Set<MetricDatum> metrics = new HashSet<>();
 
             for (Map.Entry<String, Gauge> g : gauges.entrySet()) {
 
@@ -325,41 +324,41 @@ public class CloudWatchMetricsReporter extends ScheduledReporter {
                     continue;
                 }
 
-                Map<String, String> tagsToUse = new HashMap<String, String>(tags);
+                Map<String, String> tagsToUse = new HashMap<>(tags);
                 String key = g.getKey();
                 metrics.add(buildGauge(key, value.get(), timestamp, tagsToUse));
             }
 
             for (Map.Entry<String, Counter> entry : counters.entrySet()) {
-                Map<String, String> tagsToUse = new HashMap<String, String>(tags);
+                Map<String, String> tagsToUse = new HashMap<>(tags);
                 String key = entry.getKey();
                 metrics.add(buildCounter(key, entry.getValue(), timestamp, tagsToUse));
             }
 
             for (Map.Entry<String, Histogram> entry : histograms.entrySet()) {
-                Map<String, String> tagsToUse = new HashMap<String, String>(tags);
+                Map<String, String> tagsToUse = new HashMap<>(tags);
                 String key = entry.getKey();
                 metrics.addAll(buildHistograms(key, entry.getValue(), timestamp, tagsToUse));
             }
 
             for (Map.Entry<String, Meter> entry : meters.entrySet()) {
-                Map<String, String> tagsToUse = new HashMap<String, String>(tags);
+                Map<String, String> tagsToUse = new HashMap<>(tags);
                 String key = entry.getKey();
                 metrics.addAll(buildMeters(key, entry.getValue(), timestamp, tagsToUse));
             }
 
             for (Map.Entry<String, Timer> entry : timers.entrySet()) {
-                Map<String, String> tagsToUse = new HashMap<String, String>(tags);
+                Map<String, String> tagsToUse = new HashMap<>(tags);
                 String key = entry.getKey();
                 metrics.addAll(buildTimers(key, entry.getValue(), timestamp, tagsToUse));
             }
 
             // Apply metric datum filter and processors
-            final Set<MetricDatum> filteredAndProcessed = FluentIterable.from(metrics)
+            final Set<MetricDatum> filteredAndProcessed = metrics.stream()
                     .filter(metricDatumFilter)
-                    .transform(ChainedMetricProcessor.using(cloudWatchMetricProcessors))
-                    .transformAndConcat(ChainedDuplicatingMetricProcessor.using(duplicatingCloudWatchMetricProcessors))
-                    .toSet();
+                    .map(ChainedMetricProcessor.using(cloudWatchMetricProcessors))
+                    .flatMap(ChainedDuplicatingMetricProcessor.using(duplicatingCloudWatchMetricProcessors))
+                    .collect(Collectors.toSet());
 
             // Each CloudWatch API request may contain at maximum 20 datums. Break into partitions of 20.
             Iterable<List<MetricDatum>> dataPartitions = Iterables.partition(filteredAndProcessed, 20);
@@ -462,14 +461,14 @@ public class CloudWatchMetricsReporter extends ScheduledReporter {
         return new MetricDatum().withMetricName(decorateCounters ? prefix(name, "count") : prefix(name))
                 .withTimestamp(new Date(timestamp))
                 .withValue(Long.valueOf(counter.getCount()).doubleValue())
-                .withDimensions(FluentIterable.from(tags.entrySet()).transform(TagToDimension.INSTANCE).toSet());
+                .withDimensions(tags.entrySet().stream().map(TagToDimension.INSTANCE).collect(Collectors.toSet()));
     }
 
     private MetricDatum buildGauge(String name, double value, long timestamp, Map<String, String> tags) {
         return new MetricDatum().withMetricName(decorateGauges ? prefix(name, "value") : prefix(name))
                 .withValue(value)
                 .withTimestamp(new Date(timestamp))
-                .withDimensions(FluentIterable.from(tags.entrySet()).transform(TagToDimension.INSTANCE).toSet());
+                .withDimensions(tags.entrySet().stream().map(TagToDimension.INSTANCE).collect(Collectors.toSet()));
     }
 
     private String prefix(String... components) {
@@ -489,6 +488,6 @@ public class CloudWatchMetricsReporter extends ScheduledReporter {
     }
 
     private Optional<Double> parseDouble(Object value) {
-        return Optional.fromNullable(Doubles.tryParse(value.toString()));
+        return Optional.ofNullable(Doubles.tryParse(value.toString()));
     }
 }
