@@ -17,9 +17,9 @@
 package com.bizrateinsights.metrics;
 
 import com.amazonaws.services.cloudwatch.model.Dimension;
-import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -34,7 +34,8 @@ public class TagToDimensionTest {
     @Test
     public void shouldConvertTagToDimension() {
         // Given
-        final Map<String, String> tags = ImmutableMap.of("key", "value");
+        final Map<String, String> tags = new HashMap<>();
+        tags.put("key", "value");
 
         // When
         final Dimension result = TagToDimension.INSTANCE.apply(tags.entrySet().stream().findFirst().get());

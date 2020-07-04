@@ -30,15 +30,11 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.ScheduledReporter;
 import com.codahale.metrics.Snapshot;
 import com.codahale.metrics.Timer;
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.primitives.Doubles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,6 +45,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -77,9 +74,9 @@ public class CloudWatchMetricsReporter extends ScheduledReporter {
     private boolean decorateCounters = true;
     private boolean decorateGauges = true;
 
-    private Predicate<MetricDatum> metricDatumFilter = Predicates.alwaysTrue();
-    private List<Function<MetricDatum, MetricDatum>> cloudWatchMetricProcessors = ImmutableList.of();
-    private List<Function<MetricDatum, Set<MetricDatum>>> duplicatingCloudWatchMetricProcessors = ImmutableList.of();
+    private Predicate<MetricDatum> metricDatumFilter = x -> true;
+    private List<Function<MetricDatum, MetricDatum>> cloudWatchMetricProcessors = Collections.emptyList();
+    private List<Function<MetricDatum, Set<MetricDatum>>> duplicatingCloudWatchMetricProcessors = Collections.emptyList();
 
     /**
      * Returns a new {@link Builder} for {@link CloudWatchMetricsReporter}.
@@ -103,13 +100,13 @@ public class CloudWatchMetricsReporter extends ScheduledReporter {
         private TimeUnit rateUnit;
         private TimeUnit durationUnit;
         private MetricFilter filter;
-        private Predicate<MetricDatum> metricDatumFilter = Predicates.alwaysTrue();
-        private Map<String, String> tags = ImmutableMap.of();
+        private Predicate<MetricDatum> metricDatumFilter = x -> true;
+        private Map<String, String> tags = Collections.emptyMap();
         private boolean decorateCounters;
         private boolean decorateGauges;
         private boolean enabled;
-        private List<Function<MetricDatum, MetricDatum>> cloudWatchMetricProcessors = ImmutableList.of();
-        private List<Function<MetricDatum, Set<MetricDatum>>> duplicatingCloudWatchMetricProcessors = ImmutableList.of();
+        private List<Function<MetricDatum, MetricDatum>> cloudWatchMetricProcessors = Collections.emptyList();
+        private List<Function<MetricDatum, Set<MetricDatum>>> duplicatingCloudWatchMetricProcessors = Collections.emptyList();
 
         private Builder(MetricRegistry registry) {
             this.registry = registry;
@@ -198,7 +195,7 @@ public class CloudWatchMetricsReporter extends ScheduledReporter {
          * @return
          */
         public Builder cloudWatchMetricProcessors(List<Function<MetricDatum, MetricDatum>> cloudWatchMetricProcessors) {
-            this.cloudWatchMetricProcessors = ImmutableList.copyOf(cloudWatchMetricProcessors);
+            this.cloudWatchMetricProcessors = Collections.unmodifiableList(cloudWatchMetricProcessors);
             return this;
         }
 
@@ -211,7 +208,7 @@ public class CloudWatchMetricsReporter extends ScheduledReporter {
          * @return
          */
         public Builder withDuplicatingCloudWatchMetricProcessors(List<Function<MetricDatum, Set<MetricDatum>>> duplicatingCloudWatchMetricProcessors) {
-            this.duplicatingCloudWatchMetricProcessors = ImmutableList.copyOf(duplicatingCloudWatchMetricProcessors);
+            this.duplicatingCloudWatchMetricProcessors = Collections.unmodifiableList(duplicatingCloudWatchMetricProcessors);
             return this;
         }
 
@@ -304,8 +301,8 @@ public class CloudWatchMetricsReporter extends ScheduledReporter {
         this.decorateGauges = decorateGauges;
         this.enabled = enabled;
         this.metricDatumFilter = metricDatumFilter;
-        this.cloudWatchMetricProcessors = ImmutableList.copyOf(cloudWatchMetricProcessors);
-        this.duplicatingCloudWatchMetricProcessors = ImmutableList.copyOf(duplicatingCloudWatchMetricProcessors);
+        this.cloudWatchMetricProcessors = Collections.unmodifiableList(cloudWatchMetricProcessors);
+        this.duplicatingCloudWatchMetricProcessors = Collections.unmodifiableList(duplicatingCloudWatchMetricProcessors);
     }
 
     @Override
@@ -361,8 +358,11 @@ public class CloudWatchMetricsReporter extends ScheduledReporter {
                     .collect(Collectors.toSet());
 
             // Each CloudWatch API request may contain at maximum 20 datums. Break into partitions of 20.
-            Iterable<List<MetricDatum>> dataPartitions = Iterables.partition(filteredAndProcessed, 20);
-            List<Future<?>> cloudWatchFutures = Lists.newArrayList();
+            final AtomicInteger counter = new AtomicInteger();
+            List<List<MetricDatum>> dataPartitions = new ArrayList<>(filteredAndProcessed.stream()
+                    .collect(Collectors.groupingBy(x -> counter.getAndIncrement() / 20))
+                    .values());
+            List<Future<?>> cloudWatchFutures = new ArrayList<>();
 
             if (enabled) {
                 // Submit asynchronously with threads.
@@ -488,6 +488,10 @@ public class CloudWatchMetricsReporter extends ScheduledReporter {
     }
 
     private Optional<Double> parseDouble(Object value) {
-        return Optional.ofNullable(Doubles.tryParse(value.toString()));
+        try {
+            return Optional.of(Double.parseDouble(value.toString()));
+        } catch (NumberFormatException e) {
+            return Optional.empty();
+        }
     }
 }

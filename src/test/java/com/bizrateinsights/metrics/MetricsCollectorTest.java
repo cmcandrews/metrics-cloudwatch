@@ -19,11 +19,11 @@ package com.bizrateinsights.metrics;
 import com.amazonaws.services.cloudwatch.model.Dimension;
 import com.amazonaws.services.cloudwatch.model.MetricDatum;
 import com.amazonaws.services.cloudwatch.model.StandardUnit;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import org.junit.Test;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,7 +41,8 @@ public class MetricsCollectorTest {
         // Given
         final String prefix = "";
         final long timestamp = System.currentTimeMillis();
-        final Map<String, String> tags = ImmutableMap.of("key", "value");
+        final Map<String, String> tags = new HashMap<>();
+        tags.put("key", "value");
 
         final String metric1Name = "metric1";
         final String metric1Value = "1";
@@ -56,7 +57,8 @@ public class MetricsCollectorTest {
                 .build();
 
         // Then
-        final Set<Dimension> expectedDimensions = ImmutableSet.of(new Dimension().withName("key").withValue("value"));
+        final Set<Dimension> expectedDimensions = new HashSet<>();
+        expectedDimensions.add(new Dimension().withName("key").withValue("value"));
         final MetricDatum expectedMetric1 = new MetricDatum()
                 .withMetricName(metric1Name)
                 .withTimestamp(new Date(timestamp))
@@ -76,7 +78,8 @@ public class MetricsCollectorTest {
         // Given
         final String prefix = "";
         final long timestamp = System.currentTimeMillis();
-        final Map<String, String> tags = ImmutableMap.of("key", "value");
+        final Map<String, String> tags = new HashMap<>();
+        tags.put("key", "value");
 
         final String metric1Name = "metric1";
         final String metric1Value = "1";
@@ -93,7 +96,8 @@ public class MetricsCollectorTest {
                 .build();
 
         // Then
-        final Set<Dimension> expectedDimensions = ImmutableSet.of(new Dimension().withName("key").withValue("value"));
+        final Set<Dimension> expectedDimensions = new HashSet<>();
+        expectedDimensions.add(new Dimension().withName("key").withValue("value"));
         final MetricDatum expectedMetric1 = new MetricDatum()
                 .withMetricName(metric1Name)
                 .withTimestamp(new Date(timestamp))
@@ -115,7 +119,8 @@ public class MetricsCollectorTest {
         // Given
         final String prefix = "";
         final long timestamp = System.currentTimeMillis();
-        final Map<String, String> tags = ImmutableMap.of("key", "value");
+        final Map<String, String> tags = new HashMap<>();
+        tags.put("key", "value");
 
         final String metricName = "metric1";
         final String metricValue = "1";
@@ -127,7 +132,8 @@ public class MetricsCollectorTest {
                 .build();
 
         // Then
-        final Set<Dimension> expectedDimensions = ImmutableSet.of(new Dimension().withName("key").withValue("value"));
+        final Set<Dimension> expectedDimensions = new HashSet<>();
+        expectedDimensions.add(new Dimension().withName("key").withValue("value"));
         final MetricDatum expectedMetric = new MetricDatum()
                 .withMetricName(metricName)
                 .withTimestamp(new Date(timestamp))
@@ -142,7 +148,8 @@ public class MetricsCollectorTest {
     public void shouldCollectMetricsWithRateUnits() {
         final String prefix = "";
         final long timestamp = System.currentTimeMillis();
-        final Map<String, String> tags = ImmutableMap.of("key", "value");
+        final Map<String, String> tags = new HashMap<>();
+        tags.put("key", "value");
 
         final String metricName = "metric1";
         final String metricValue = "1";
@@ -154,7 +161,8 @@ public class MetricsCollectorTest {
                 .build();
 
         // Then
-        final Set<Dimension> expectedDimensions = ImmutableSet.of(new Dimension().withName("key").withValue("value"));
+        final Set<Dimension> expectedDimensions = new HashSet<>();
+        expectedDimensions.add(new Dimension().withName("key").withValue("value"));
         final MetricDatum expectedMetric = new MetricDatum()
                 .withMetricName(metricName)
                 .withTimestamp(new Date(timestamp))

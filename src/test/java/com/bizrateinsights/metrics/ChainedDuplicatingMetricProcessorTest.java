@@ -17,13 +17,15 @@
 package com.bizrateinsights.metrics;
 
 import com.amazonaws.services.cloudwatch.model.MetricDatum;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -49,10 +51,17 @@ public class ChainedDuplicatingMetricProcessorTest {
     @Test
     public void shouldReturnOriginalAndMutated() {
         // Given
-        processor = ChainedDuplicatingMetricProcessor.using(ImmutableList.of(delegate));
+        final List<Function<MetricDatum, Set<MetricDatum>>> delegateList = new ArrayList<>();
+        delegateList.add(delegate);
+
+        processor = ChainedDuplicatingMetricProcessor.using(delegateList);
         final MetricDatum original = new MetricDatum().withMetricName("metric1");
         final MetricDatum mutated = new MetricDatum().withMetricName("mutated");
-        given(delegate.apply(any(MetricDatum.class))).willReturn(ImmutableSet.of(mutated));
+
+        final Set<MetricDatum> mutatedSet = new HashSet<>();
+        mutatedSet.add(mutated);
+
+        given(delegate.apply(any(MetricDatum.class))).willReturn(mutatedSet);
 
         // When
         final Stream<MetricDatum> result = processor.apply(original);
@@ -65,8 +74,7 @@ public class ChainedDuplicatingMetricProcessorTest {
     @Test
     public void shouldReturnOriginalForEmptyDelegateList() {
         // Given
-        processor =
-                ChainedDuplicatingMetricProcessor.using(ImmutableList.of());
+        processor = ChainedDuplicatingMetricProcessor.using(Collections.emptyList());
 
         final MetricDatum original = new MetricDatum().withMetricName("metric");
 

@@ -17,10 +17,9 @@
 package com.bizrateinsights.metrics;
 
 import com.amazonaws.services.cloudwatch.model.MetricDatum;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -42,16 +41,17 @@ public class ChainedDuplicatingMetricProcessor implements Function<MetricDatum, 
     }
 
     public ChainedDuplicatingMetricProcessor(List<Function<MetricDatum, Set<MetricDatum>>> delegateProcessors) {
-        this.delegateProcessors = ImmutableList.copyOf(delegateProcessors);
+        this.delegateProcessors = Collections.unmodifiableList(delegateProcessors);
     }
 
     @Override
     public Stream<MetricDatum> apply(MetricDatum metricDatum) {
 
-        final Set<MetricDatum> result = Sets.newHashSet(metricDatum);
+        final Set<MetricDatum> result = new HashSet<>();
+        result.add(metricDatum);
 
         for (Function<MetricDatum, Set<MetricDatum>> delegate : delegateProcessors) {
-            result.addAll(Optional.ofNullable(delegate.apply(metricDatum)).orElse(ImmutableSet.of()));
+            result.addAll(Optional.ofNullable(delegate.apply(metricDatum)).orElse(Collections.emptySet()));
         }
 
         return result.stream();

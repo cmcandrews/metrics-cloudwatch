@@ -17,8 +17,8 @@
 package com.bizrateinsights.metrics;
 
 import com.amazonaws.services.cloudwatch.model.MetricDatum;
-import com.google.common.collect.ImmutableList;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
@@ -36,7 +36,7 @@ public class ChainedMetricProcessor implements Function<MetricDatum, MetricDatum
     }
 
     private ChainedMetricProcessor(List<Function<MetricDatum, MetricDatum>> delegateProcessors) {
-        this.delegateProcessors = ImmutableList.copyOf(delegateProcessors);
+        this.delegateProcessors = Collections.unmodifiableList(delegateProcessors);
     }
 
     @Override

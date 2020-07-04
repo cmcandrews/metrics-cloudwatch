@@ -17,12 +17,14 @@
 package com.bizrateinsights.metrics;
 
 import com.amazonaws.services.cloudwatch.model.MetricDatum;
-import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Function;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -46,7 +48,10 @@ public class ChainedMetricProcessorTest {
     @Test
     public void shouldReturnMutatedMetric() {
         // Given
-        processor = ChainedMetricProcessor.using(ImmutableList.of(delegate));
+        final List<Function<MetricDatum, MetricDatum>> delegateList = new ArrayList<>();
+        delegateList.add(delegate);
+
+        processor = ChainedMetricProcessor.using(delegateList);
         final MetricDatum original = new MetricDatum().withMetricName("original");
         final MetricDatum mutated = new MetricDatum().withMetricName("mutated");
         given(delegate.apply(any(MetricDatum.class))).willReturn(mutated);
@@ -62,7 +67,7 @@ public class ChainedMetricProcessorTest {
     @Test
     public void shouldReturnOriginalForEmptyDelegateList() {
         // Given
-        processor = ChainedMetricProcessor.using(ImmutableList.of());
+        processor = ChainedMetricProcessor.using(Collections.emptyList());
         final MetricDatum original = new MetricDatum().withMetricName("original");
 
         // When
